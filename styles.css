@@ -1,0 +1,448 @@
+/* --- Variables --- */
+:root {
+  --bg: #0a0e12;
+  --text: #e8eaed;
+  --text-muted: rgba(232, 234, 237, 0.75);
+  --link: #7dd3fc;
+  --link-hover: #bae6fd;
+  --link-underline: rgba(125, 211, 252, 0.4);
+  --line-123: #e53935;
+  --line-456: #43a047;
+  --line-nqr: #f9a825;
+  --overlay-bg: rgba(10, 14, 18, 0.85);
+  --min-tap: 44px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* --- Vertical split: left = canvas + text, right = map panel --- */
+.page-wrap {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.main-column {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* --- Canvas (p5) --- */
+#canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+#canvas-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
+
+/* --- Overlays --- */
+.overlay {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.overlay * {
+  pointer-events: auto;
+}
+
+/* --- Header --- */
+header.overlay {
+  padding: clamp(1rem, 4vw, 2rem) clamp(1rem, 5vw, 3rem);
+  max-width: 42rem;
+}
+
+header.overlay h1 {
+  margin: 0;
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+header.overlay .subtitle {
+  margin: 0.2em 0 0;
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  color: var(--text-muted);
+}
+
+header.overlay .dates {
+  margin: 0.4em 0 0;
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  color: var(--text-muted);
+}
+
+/* --- Intro blurb --- */
+.intro.overlay {
+  padding: 0 clamp(1rem, 5vw, 3rem);
+  max-width: 36rem;
+  margin-top: 0.5rem;
+}
+
+.intro.overlay p {
+  margin: 0;
+  font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* --- Links --- */
+a {
+  color: var(--link);
+  text-decoration: none;
+  border-bottom: 1px solid var(--link-underline);
+  transition: color 0.2s, border-color 0.2s;
+}
+
+a:hover {
+  color: var(--link-hover);
+  border-bottom-color: var(--link-hover);
+}
+
+a:focus-visible {
+  color: var(--link-hover);
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+/* Map/catalog links keep their own styles */
+.map-station,
+a.art-item {
+  border-bottom: none;
+}
+
+/* --- Map panel (right column) --- */
+.map-panel.overlay {
+  width: 360px;
+  min-width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: clamp(0.75rem, 3vw, 1.25rem) clamp(1rem, 2vw, 1.5rem);
+  background: #0a0a0a;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  align-self: stretch;
+}
+
+.map-panel .map-label,
+.map-panel .minimal-map,
+.map-panel .catalog-label,
+.map-panel .catalog-tabs {
+  flex-shrink: 0;
+}
+
+.map-label {
+  margin: 0 0 0.4rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.minimal-map {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  display: block;
+}
+
+/* Bold subway lines (schematic style) */
+.map-line {
+  stroke-width: 4;
+}
+.map-line-123 { color: var(--line-123); }
+.map-line-456 { color: var(--line-456); }
+.map-line-nqr { color: var(--line-nqr); }
+
+/* Line ID circles (e.g. 1, 4, N) */
+.map-line-id { color: inherit; }
+.map-line-id-123 { color: var(--line-123); }
+.map-line-id-456 { color: var(--line-456); }
+.map-line-id-nqr { color: var(--line-nqr); }
+.map-line-text {
+  font-size: 11px;
+  font-weight: 700;
+  fill: #fff;
+  font-family: inherit;
+}
+
+/* Station dots along lines */
+.map-dot {
+  fill: #fff;
+}
+
+/* Region label */
+.map-region-label {
+  font-size: 9px;
+  fill: var(--text-muted);
+  font-family: inherit;
+  letter-spacing: 0.06em;
+}
+
+.map-station {
+  cursor: pointer;
+  color: var(--text);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+@media (hover: hover) {
+  .map-station:hover {
+    opacity: 0.9;
+  }
+  .map-station:hover .map-station-circle {
+    transform: scale(1);
+  }
+}
+.map-station:focus-visible {
+  opacity: 0.9;
+}
+.map-station:focus-visible .map-station-circle {
+  transform: scale(1);
+}
+
+.map-station-circle {
+  transition: transform 0.2s;
+  transform-origin: center;
+}
+
+.station-label {
+  font-size: 8px;
+  fill: #fff;
+  font-family: inherit;
+}
+
+/* Reference stations (Sol LeWitt, Dan Flavin) — highlighted on map */
+.map-station-reference .map-station-circle {
+  stroke-width: 2;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+}
+.map-station-reference .station-label {
+  font-weight: 700;
+  font-size: 9px;
+}
+
+/* --- MTA Art catalog --- */
+.catalog-label {
+  margin: 0.75rem 0 0.35rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.catalog-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.catalog-tab {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.75rem;
+  font-family: inherit;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.catalog-tab:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.catalog-tab.active {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.catalog-list {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  -webkit-overflow-scrolling: touch;
+}
+
+.art-item {
+  display: block;
+  padding: 0.3rem 0;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: color 0.2s, background 0.2s;
+}
+
+a.art-item:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.art-station {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.art-item-reference {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  padding-left: 0.5rem;
+  border-left: 3px solid rgba(255, 255, 255, 0.5);
+}
+
+.art-item-reference .art-station {
+  font-weight: 700;
+}
+
+.reference-badge {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bg);
+  background: var(--text-muted);
+  border-radius: 2px;
+}
+
+.catalog-error {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* --- Mobile: stacked layout --- */
+@media (max-width: 768px) {
+  .page-wrap {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .main-column {
+    flex: none;
+    height: 50vh;
+    height: 50dvh;
+    min-height: 280px;
+    max-height: 70vh;
+    max-height: 70dvh;
+  }
+
+  .map-panel.overlay {
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 auto;
+    min-height: 40vh;
+    min-height: 40dvh;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: max(clamp(0.75rem, 3vw, 1.25rem), env(safe-area-inset-bottom));
+  }
+
+  .minimal-map {
+    max-width: 100%;
+  }
+
+  header.overlay {
+    padding-left: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-left));
+    padding-right: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-right));
+  }
+
+  .intro.overlay {
+    padding-left: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-left));
+    padding-right: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-right));
+  }
+}
+
+/* Touch targets and small-screen tweaks */
+@media (max-width: 600px) {
+  .map-station {
+    min-height: var(--min-tap);
+    min-width: var(--min-tap);
+  }
+
+  .catalog-tab {
+    min-height: var(--min-tap);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .art-item {
+    padding: 0.5rem 0;
+    min-height: var(--min-tap);
+    display: flex;
+    align-items: center;
+  }
+
+  header.overlay h1 {
+    font-size: 1.2rem;
+  }
+
+  header.overlay .subtitle {
+    font-size: 0.95rem;
+  }
+
+  header.overlay .dates {
+    font-size: 0.8rem;
+  }
+
+  .intro.overlay p {
+    font-size: 0.85rem;
+  }
+
+  .catalog-list {
+    font-size: 0.8rem;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .map-station circle,
+  .map-station:hover circle { transition: none; }
+  .catalog-tab,
+  .art-item { transition: none; }
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> Turnstile Murmurations | Trpti Sanghvi | Data through Design 2026 </title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+</head>
+<body>
+  <div class="page-wrap">
+    <div class="main-column">
+      <div id="canvas-container"></div>
+
+      <header class="overlay">
+    <h1> Turnstile Murmurations </h1>
+    <p class="subtitle">Data through Design 2026 • Echo(logies)  </p>
+    <p class="dates">March 21 – April 5, 2026 • Trpti Sanghvi</p>
+  </header>
+
+  <section class="overlay intro">
+    <p><em>Turnstile Murmurations</em> (2026) transforms the turnstile into a responsive light sculpture driven by <a href="https://data.ny.gov/Transportation/MTA-Subway-Hourly-Ridership-2020-2024/wujg-7c2s" target="_blank" rel="noopener noreferrer">MTA ridership</a>. <br><br>
+      The result is a luminous tracing of the NYC's circadian rhythm, mirroring our collective cycles of congestion and calm. The subway becomes a murmuration: data flowing like a flock through the city.<br><br>
+      The work exists in dialogue with the rich history of public art within the <a href="https://data.ny.gov/Transportation/MTA-Permanent-Art-Catalog-Beginning-1980/4y8j-9pkd/about_data" target="_blank" rel="noopener noreferrer">New York transit system</a>. Explore the works that define our subterranean landscape. <br><br>
+
+    </p>
+  </section>
+    </div>
+
+    <aside class="overlay map-panel">
+    <p class="map-label">Truncated Map with Inspired Works</p>
+    <svg class="minimal-map" viewBox="0 0 220 92" aria-hidden="true">
+      <!-- 1/2/3 line (Broadway–7th Ave, west) -->
+      <path class="map-line map-line-123" d="M 32 14 L 32 78" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+      <g class="map-line-id map-line-id-123" aria-hidden="true">
+        <circle cx="18" cy="14" r="10" fill="currentColor"/>
+        <text x="18" y="17" text-anchor="middle" class="map-line-text">1</text>
+      </g>
+      <!-- 4/5/6 line (Lexington, east) -->
+      <path class="map-line map-line-456" d="M 202 14 L 202 78" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+      <g class="map-line-id map-line-id-456" aria-hidden="true">
+        <circle cx="202" cy="14" r="10" fill="currentColor"/>
+        <text x="202" y="17" text-anchor="middle" class="map-line-text">4</text>
+      </g>
+      <!-- N/Q/R line (Broadway, diagonal) -->
+      <path class="map-line map-line-nqr" d="M 48 20 L 110 46 L 172 74" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <g class="map-line-id map-line-id-nqr" aria-hidden="true">
+        <circle cx="110" cy="60" r="10" fill="currentColor"/>
+        <text x="110" y="64" text-anchor="middle" class="map-line-text">N</text>
+      </g>
+      <!-- Station dots along 123 (omit 32,42 — Columbus Circle, covered by Sol LeWitt link) -->
+      <circle cx="32" cy="24" r="2.5" class="map-dot"/>
+      <circle cx="32" cy="58" r="2.5" class="map-dot"/>
+      <circle cx="32" cy="72" r="2.5" class="map-dot"/>
+      <!-- Station dots along 456 (omit 202,54 — Grand Central, covered by Dan Flavin link) -->
+      <circle cx="202" cy="26" r="2.5" class="map-dot"/>
+      <circle cx="202" cy="70" r="2.5" class="map-dot"/>
+      <!-- Station dots along NQR -->
+      <circle cx="48" cy="20" r="2.5" class="map-dot"/>
+      <circle cx="110" cy="46" r="2.5" class="map-dot"/>
+      <circle cx="172" cy="74" r="2.5" class="map-dot"/>
+      <!-- Columbus Circle (on 123): Sol LeWitt — referenced in piece -->
+      <a href="https://www.moma.org/slideshows/490/5005" target="_blank" rel="noopener noreferrer" class="map-station map-station-reference map-station-columbus" aria-label="Columbus Circle — Sol LeWitt at MOMA">
+        <circle cx="32" cy="42" r="6" fill="#fff" stroke="currentColor" stroke-width="2" class="map-station-circle"/>
+        <text x="32" y="54" text-anchor="middle" class="station-label">Sol LeWitt</text>
+      </a>
+      <!-- Grand Central (on 456): Dan Flavin — referenced in piece -->
+      <a href="https://www.instagram.com/p/C7mjDhXM1fZ/?hl=en" target="_blank" rel="noopener noreferrer" class="map-station map-station-reference map-station-grandcentral" aria-label="Grand Central — Dan Flavin on Instagram">
+        <circle cx="202" cy="54" r="6" fill="#fff" stroke="currentColor" stroke-width="2" class="map-station-circle"/>
+        <text x="170" y="63" text-anchor="middle" class="station-label">Dan Flavin</text>
+      </a>
+      <text x="110" y="88" text-anchor="middle" class="map-region-label">Manhattan</text>
+    </svg>
+    <p class="catalog-label">MTA Permanent Art — 1/2/3, 4/5/6, N/Q/R</p>
+    <div class="catalog-tabs" role="tablist">
+      <button type="button" class="catalog-tab active" data-line="123" role="tab" aria-selected="true">1/2/3</button>
+      <button type="button" class="catalog-tab" data-line="456" role="tab" aria-selected="false">4/5/6</button>
+      <button type="button" class="catalog-tab" data-line="NQR" role="tab" aria-selected="false">N/Q/R</button>
+    </div>
+    <div class="catalog-list" id="catalog-list" role="tabpanel"></div>
+    </aside>
+  </div>
+
+  <script src="mta-art-catalog.js"></script>
+  <script src="sketch.js"></script>
+</body>
+</html>
