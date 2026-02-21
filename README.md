@@ -1,4 +1,4 @@
-#dxd website - turnstile murmurations
+# dxd website - turnstile murmurations
 
 this website is part of the art work for data through design's 2026 exhibition: echo(logies). it pays homage to the artists of NY, using the MTA Permanent Art Catalog
 
