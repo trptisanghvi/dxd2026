@@ -78,40 +78,40 @@ html, body {
 
 /* --- Header --- */
 header.overlay {
-  padding: clamp(1rem, 4vw, 2rem) clamp(1rem, 5vw, 3rem);
-  max-width: 42rem;
+  padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 5vw, 3rem);
+  max-width: 38rem;
 }
 
 header.overlay h1 {
   margin: 0;
-  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-size: clamp(0.95rem, 2.2vw, 1.2rem);
   font-weight: 600;
   letter-spacing: 0.02em;
 }
 
 header.overlay .subtitle {
-  margin: 0.2em 0 0;
-  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  margin: 0.15em 0 0;
+  font-size: clamp(0.75rem, 1.6vw, 0.9rem);
   color: var(--text-muted);
 }
 
 header.overlay .dates {
-  margin: 0.4em 0 0;
-  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  margin: 0.25em 0 0;
+  font-size: clamp(0.7rem, 1.4vw, 0.8rem);
   color: var(--text-muted);
 }
 
 /* --- Intro blurb --- */
 .intro.overlay {
   padding: 0 clamp(1rem, 5vw, 3rem);
-  max-width: 36rem;
-  margin-top: 0.5rem;
+  max-width: 34rem;
+  margin-top: 0.35rem;
 }
 
 .intro.overlay p {
   margin: 0;
-  font-size: clamp(0.8rem, 1.8vw, 0.95rem);
-  line-height: 1.5;
+  font-size: clamp(0.7rem, 1.4vw, 0.8rem);
+  line-height: 1.45;
   color: var(--text-muted);
 }
 
@@ -419,19 +419,19 @@ a.art-item:hover {
   }
 
   header.overlay h1 {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 
   header.overlay .subtitle {
-    font-size: 0.95rem;
-  }
-
-  header.overlay .dates {
     font-size: 0.8rem;
   }
 
+  header.overlay .dates {
+    font-size: 0.7rem;
+  }
+
   .intro.overlay p {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
   }
 
   .catalog-list {
