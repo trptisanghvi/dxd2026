@@ -78,40 +78,40 @@ html, body {
 
 /* --- Header --- */
 header.overlay {
-  padding: clamp(1rem, 4vw, 2rem) clamp(1rem, 5vw, 3rem);
-  max-width: 42rem;
+  padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 5vw, 3rem);
+  max-width: 38rem;
 }
 
 header.overlay h1 {
   margin: 0;
-  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-size: clamp(0.95rem, 2.2vw, 1.2rem);
   font-weight: 600;
   letter-spacing: 0.02em;
 }
 
 header.overlay .subtitle {
-  margin: 0.2em 0 0;
-  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  margin: 0.15em 0 0;
+  font-size: clamp(0.75rem, 1.6vw, 0.9rem);
   color: var(--text-muted);
 }
 
 header.overlay .dates {
-  margin: 0.4em 0 0;
-  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  margin: 0.25em 0 0;
+  font-size: clamp(0.7rem, 1.4vw, 0.8rem);
   color: var(--text-muted);
 }
 
 /* --- Intro blurb --- */
 .intro.overlay {
   padding: 0 clamp(1rem, 5vw, 3rem);
-  max-width: 36rem;
-  margin-top: 0.5rem;
+  max-width: 34rem;
+  margin-top: 0.35rem;
 }
 
 .intro.overlay p {
   margin: 0;
-  font-size: clamp(0.8rem, 1.8vw, 0.95rem);
-  line-height: 1.5;
+  font-size: clamp(0.7rem, 1.4vw, 0.8rem);
+  line-height: 1.45;
   color: var(--text-muted);
 }
 
@@ -172,9 +172,11 @@ a.art-item {
 
 .minimal-map {
   width: 100%;
-  max-width: 360px;
+  max-width: 220px;
   height: auto;
   display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Bold subway lines (schematic style) */
@@ -363,38 +365,107 @@ a.art-item:hover {
 
   .main-column {
     flex: none;
-    height: 50vh;
-    height: 50dvh;
-    min-height: 280px;
-    max-height: 70vh;
-    max-height: 70dvh;
+    height: 32vh;
+    height: 32dvh;
+    min-height: 160px;
+    max-height: 38vh;
+    max-height: 38dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .map-panel.overlay {
     width: 100%;
     min-width: 0;
     flex: 1 1 auto;
-    min-height: 40vh;
-    min-height: 40dvh;
+    min-height: 50vh;
+    min-height: 50dvh;
     border-left: none;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
     padding-bottom: max(clamp(0.75rem, 3vw, 1.25rem), env(safe-area-inset-bottom));
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   .minimal-map {
-    max-width: 100%;
+    max-width: 200px;
+    min-height: 64px;
+    flex-shrink: 0;
+  }
+
+  .map-panel .map-label,
+  .map-panel .catalog-label,
+  .map-panel .catalog-tabs {
+    flex-shrink: 0;
+  }
+
+  .catalog-list {
+    flex: 1 1 0;
+    min-height: 120px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   header.overlay {
-    padding-left: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-left));
-    padding-right: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-right));
+    padding: 0.35rem max(clamp(0.75rem, 3vw, 1.25rem), env(safe-area-inset-left)) 0.25rem max(clamp(0.75rem, 3vw, 1.25rem), env(safe-area-inset-right));
+  }
+
+  header.overlay h1 {
+    font-size: 0.85rem;
+  }
+
+  header.overlay .subtitle {
+    font-size: 0.68rem;
+    margin-top: 0.1em;
+  }
+
+  header.overlay .dates {
+    font-size: 0.62rem;
+    margin-top: 0.15em;
   }
 
   .intro.overlay {
-    padding-left: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-left));
-    padding-right: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-right));
+    padding: 0 max(clamp(0.75rem, 3vw, 1.25rem), env(safe-area-inset-left)) 0 max(clamp(0.75rem, 3vw, 1.25rem), env(safe-area-inset-right));
+    margin-top: 0.2rem;
+  }
+
+  .intro.overlay p {
+    font-size: 0.65rem;
+    line-height: 1.4;
+  }
+
+  .map-label {
+    font-size: 0.6rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .catalog-label {
+    font-size: 0.6rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .catalog-tabs {
+    margin-bottom: 0.35rem;
+    gap: 0.35rem;
+  }
+
+  .catalog-tab {
+    padding: 0.28rem 0.5rem;
+    font-size: 0.65rem;
+  }
+
+  .catalog-list {
+    font-size: 0.68rem;
+    line-height: 1.35;
+  }
+
+  .map-panel.overlay {
+    padding-top: 0.5rem;
+    padding-bottom: max(clamp(0.5rem, 2vw, 1rem), env(safe-area-inset-bottom));
   }
 }
 
@@ -406,36 +477,41 @@ a.art-item:hover {
   }
 
   .catalog-tab {
-    min-height: var(--min-tap);
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8rem;
+    min-height: 36px;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.62rem;
   }
 
   .art-item {
-    padding: 0.5rem 0;
-    min-height: var(--min-tap);
+    padding: 0.35rem 0;
+    min-height: 32px;
     display: flex;
     align-items: center;
   }
 
   header.overlay h1 {
-    font-size: 1.2rem;
+    font-size: 0.78rem;
   }
 
   header.overlay .subtitle {
-    font-size: 0.95rem;
+    font-size: 0.62rem;
   }
 
   header.overlay .dates {
-    font-size: 0.8rem;
+    font-size: 0.58rem;
   }
 
   .intro.overlay p {
-    font-size: 0.85rem;
+    font-size: 0.6rem;
   }
 
   .catalog-list {
-    font-size: 0.8rem;
+    font-size: 0.62rem;
+  }
+
+  .map-label,
+  .catalog-label {
+    font-size: 0.55rem;
   }
 }
 
