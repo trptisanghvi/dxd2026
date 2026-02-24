@@ -1,6 +1,6 @@
 # dxd website - turnstile murmurations
 
-this website is part of the art work for data through design's 2026 exhibition: echo(logies). it pays homage to the artists of NY, using the MTA Permanent Art Catalog
+this website is part of the art work for [data through design's 2026 exhibition: echo(logies)](https://datathroughdesign.com/). it pays homage to the artists of NY, using the MTA Permanent Art Catalog
 
 ### Art description & images
 _Turnstile Murmurations_ transforms a familiar piece of urban infrastructure into a responsive light sculpture that registers collective movement rather than enforcing passage. An ode to New York City artists and the MTA subway, the work references Marcel Duchamp’s readymade tradition—pioneered in his 20th-century New York studio. By reclaiming the turnstile, the piece strips the object of utility to expose its sculptural form as a metaphor for an Information Ecosystem.
