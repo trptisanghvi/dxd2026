@@ -22,21 +22,38 @@ let cardHeight = 14;
 let wandererHistoryCount = 200;
 /** Top of page only; boids below this wrap back in from another edge (map panel area) */
 let flyZoneBottom = 0;
+/** Alignment force multiplier (match neighbors' direction for murmuration flow) */
+let alignMult = 0.85;
 
-if (window.innerWidth < 600) {
-  size = 6;
-  wandererHistoryCount = 140;
-  birdMaxSpeed = 2;
-  birdStroke = 1;
-  numBirds = Math.floor(numBirds * 0.6);
-  cardWidth = 16;
-  cardHeight = 10;
-} else if (window.innerWidth > 1800) {
-  size = 10;
-  wandererHistoryCount = 240;
-  birdStroke = 2;
-  cardWidth = 28;
-  cardHeight = 18;
+/** Set boid/canvas params from viewport size so mobile and resize work correctly. */
+function applyViewportParams(w, h) {
+  const isMobile = w < 600 || h < 500;
+  const isLarge = w > 1800 && h > 900;
+  if (isMobile) {
+    size = 5;
+    wandererHistoryCount = 120;
+    birdMaxSpeed = 2.2;
+    birdMaxForce = 0.05;
+    birdStroke = 1;
+    numBirds = 54;
+    cardWidth = 14;
+    cardHeight = 9;
+  } else if (isLarge) {
+    size = 10;
+    wandererHistoryCount = 240;
+    birdStroke = 2;
+    cardWidth = 28;
+    cardHeight = 18;
+  } else {
+    size = 8;
+    wandererHistoryCount = 200;
+    birdMaxSpeed = 3;
+    birdMaxForce = 0.04;
+    birdStroke = 1.5;
+    numBirds = 90;
+    cardWidth = 22;
+    cardHeight = 14;
+  }
 }
 
 function preload() {
@@ -56,6 +73,7 @@ function setup() {
   const container = document.getElementById('canvas-container');
   const w = container ? container.offsetWidth : window.innerWidth;
   const h = container ? container.offsetHeight : window.innerHeight;
+  applyViewportParams(w, h);
   const canvas = createCanvas(w, h);
   canvas.parent('canvas-container');
   frameRate(60);
@@ -76,13 +94,14 @@ function setup() {
     wanderer.update();
   }
 
-  const ctrMult = 0.1;
+  const ctrMult = 0.22;
   const sepMult = 2;
-  const cohMult = 0.5;
+  const cohMult = 0.9;
+  const alignMultFlock = 1.1;
 
-  flock123 = new Flock('123', ctrMult, sepMult, cohMult);
-  flock456 = new Flock('456', ctrMult, sepMult, cohMult);
-  flockNQR = new Flock('nqr', ctrMult, sepMult, cohMult);
+  flock123 = new Flock('123', ctrMult, sepMult, cohMult, alignMultFlock);
+  flock456 = new Flock('456', ctrMult, sepMult, cohMult, alignMultFlock);
+  flockNQR = new Flock('nqr', ctrMult, sepMult, cohMult, alignMultFlock);
 
   [flock123, flock456, flockNQR].forEach((flock, idx) => {
     const centerX = width / 2 + (idx - 1) * (width * 0.08);
@@ -93,7 +112,7 @@ function setup() {
       const r = sqrt(random()) * radius;
       const x = centerX + r * cos(angle);
       const y = centerY + r * sin(angle);
-      flock.addBoid(new Boid(x, y, ctrMult, sepMult, cohMult, flock.lineId));
+      flock.addBoid(new Boid(x, y, ctrMult, sepMult, cohMult, alignMultFlock, flock.lineId));
     }
   });
 }
@@ -111,12 +130,13 @@ function draw() {
 }
 
 // --- Flock ---
-function Flock(lineId, ctrMult, sepMult, cohMult) {
+function Flock(lineId, ctrMult, sepMult, cohMult, alignMultFlock) {
   this.boids = [];
   this.lineId = lineId;
   this.ctrMult = ctrMult;
   this.sepMult = sepMult;
   this.cohMult = cohMult;
+  this.alignMult = alignMultFlock != null ? alignMultFlock : 0.85;
 }
 
 Flock.prototype.run = function (brightness) {
@@ -130,7 +150,7 @@ Flock.prototype.addBoid = function (b) {
 };
 
 // --- Boid ---
-function Boid(x, y, ctrMult, sepMult, cohMult, lineId) {
+function Boid(x, y, ctrMult, sepMult, cohMult, alignMultBoid, lineId) {
   this.acceleration = createVector(0, 0);
   this.velocity = createVector(random(-1, 1), random(-1, 1));
   this.position = createVector(x, y);
@@ -145,6 +165,7 @@ function Boid(x, y, ctrMult, sepMult, cohMult, lineId) {
   this.ctrMult = ctrMult;
   this.sepMult = sepMult;
   this.cohMult = cohMult;
+  this.alignMult = alignMultBoid != null ? alignMultBoid : 0.85;
   this.borderz = true;
   this.lineId = lineId;
   this.delay = Math.floor(random(wandererHistoryCount));
@@ -152,6 +173,7 @@ function Boid(x, y, ctrMult, sepMult, cohMult, lineId) {
 
 Boid.prototype.run = function (boids, brightness) {
   this.flock(boids);
+  if (this.borderz) this.applyForce(this.contain());
   this.update();
   if (this.borderz) this.borders();
   this.flap();
@@ -166,17 +188,18 @@ Boid.prototype.flock = function (boids) {
   let sep = this.separate(boids);
   let coh = this.cohesion(boids);
   let ctr = this.center();
+  let ali = this.align(boids);
   sep.mult(this.sepMult);
   coh.mult(this.cohMult);
   ctr.mult(this.ctrMult);
+  ali.mult(this.alignMult);
   this.applyForce(sep);
   if (this.type === 'murm') {
     this.applyForce(coh);
     this.applyForce(ctr);
+    this.applyForce(ali);
   }
-  if (random() > 0.995) {
-    this.type = this.type === 'murm' ? 'free' : 'murm';
-  }
+  /* Keep flock together: no switching to 'free' mode */
 };
 
 Boid.prototype.update = function () {
@@ -245,28 +268,46 @@ Boid.prototype.render = function (brightness) {
   pop();
 };
 
+/** Keep boids inside canvas: steer inward near edges, hard clamp as backup. */
+const EDGE_MARGIN = 25;
+const CONTAIN_ZONE = 55;
+
+/** Steering force toward center when near edges so flock turns smoothly. */
+Boid.prototype.contain = function () {
+  const margin = Math.max(EDGE_MARGIN, size * 3);
+  const zone = Math.max(CONTAIN_ZONE, size * 6);
+  const left = margin;
+  const right = width - margin;
+  const top = margin;
+  const bottom = flyZoneBottom - margin;
+  let steer = createVector(0, 0);
+
+  if (this.position.x < left + zone) {
+    steer.x = this.maxforce * 1.5 * (1 - (this.position.x - left) / zone);
+  } else if (this.position.x > right - zone) {
+    steer.x = -this.maxforce * 1.5 * (1 - (right - this.position.x) / zone);
+  }
+  if (this.position.y < top + zone) {
+    steer.y = this.maxforce * 1.5 * (1 - (this.position.y - top) / zone);
+  } else if (this.position.y > bottom - zone) {
+    steer.y = -this.maxforce * 1.5 * (1 - (bottom - this.position.y) / zone);
+  }
+  if (steer.mag() > 0) {
+    steer.limit(this.maxforce * 1.5);
+  }
+  return steer;
+};
+
 Boid.prototype.borders = function () {
-  // Horizontal wrap
-  if (this.position.x < -width / 4) this.position.x = width + this.r;
-  if (this.position.x > width + width / 4) this.position.x = -this.r;
-  // Keep flock in top of page (above truncated map); wrap back in from another edge
-  if (this.position.y > flyZoneBottom) {
-    const edge = Math.floor(random(3));
-    if (edge === 0) {
-      this.position.y = random(0, 40);
-      this.position.x = random(0, width);
-    } else if (edge === 1) {
-      this.position.x = random(0, 30);
-      this.position.y = random(0, flyZoneBottom);
-    } else {
-      this.position.x = random(width - 30, width);
-      this.position.y = random(0, flyZoneBottom);
-    }
-  }
-  if (this.position.y < 0) {
-    this.position.y = flyZoneBottom - random(0, 30);
-    this.position.x = constrain(this.position.x, 0, width);
-  }
+  const margin = Math.max(EDGE_MARGIN, size * 3);
+  const left = margin;
+  const right = width - margin;
+  const top = margin;
+  const bottom = flyZoneBottom - margin;
+
+  this.position.x = constrain(this.position.x, left, right);
+  this.position.y = constrain(this.position.y, top, bottom);
+  this.velocity.limit(this.maxspeed);
 };
 
 Boid.prototype.separate = function (boids) {
@@ -307,7 +348,7 @@ Boid.prototype.center = function () {
 };
 
 Boid.prototype.cohesion = function (boids) {
-  let neighbordist = 50;
+  let neighbordist = Math.max(40, size * 6);
   let sum = createVector(0, 0);
   let count = 0;
   for (let i = 0; i < boids.length; i++) {
@@ -324,16 +365,42 @@ Boid.prototype.cohesion = function (boids) {
   return createVector(0, 0);
 };
 
-// --- Wanderer ---
+/** Alignment: steer towards average heading of neighbors (classic boids murmuration). */
+Boid.prototype.align = function (boids) {
+  let neighbordist = Math.max(45, size * 7);
+  let sum = createVector(0, 0);
+  let count = 0;
+  for (let i = 0; i < boids.length; i++) {
+    let d = p5.Vector.dist(this.position, boids[i].position);
+    if (d > 0 && d < neighbordist) {
+      sum.add(boids[i].velocity);
+      count++;
+    }
+  }
+  if (count > 0) {
+    sum.div(count);
+    sum.normalize();
+    sum.mult(this.maxspeed);
+    let steer = p5.Vector.sub(sum, this.velocity);
+    steer.limit(this.maxforce);
+    return steer;
+  }
+  return createVector(0, 0);
+};
+
+// --- Wanderer --- (path stays well inside canvas so flock stays in view)
 function Wanderer() {
-  this.position = createVector(width / 3, flyZoneBottom / 2);
+  const margin = Math.max(EDGE_MARGIN, 40);
+  const innerW = width - 2 * margin;
+  const innerH = flyZoneBottom - 2 * margin;
+  this.position = createVector(width / 2, flyZoneBottom / 2);
   this.velocity = createVector(0, 0);
   this.acceleration = createVector(0, 0);
-  this.maxSpeed = 6;
+  this.maxSpeed = 5;
   this.maxForce = 0.05;
-  this.boxWidth = 0.66 * width;
-  this.boxHeight = 0.4 * flyZoneBottom;
-  this.centerX = width / 3;
+  this.boxWidth = Math.min(0.7 * innerW, innerW * 0.85);
+  this.boxHeight = Math.min(0.5 * innerH, innerH * 0.75);
+  this.centerX = width / 2;
   this.centerY = flyZoneBottom / 2;
 }
 
@@ -361,11 +428,33 @@ Wanderer.prototype.stayInBox = function () {
   this.acceleration.add(edgeForce);
 };
 
+Wanderer.prototype.resize = function () {
+  const margin = Math.max(EDGE_MARGIN, 40);
+  const innerW = width - 2 * margin;
+  const innerH = flyZoneBottom - 2 * margin;
+  this.boxWidth = Math.min(0.7 * innerW, innerW * 0.85);
+  this.boxHeight = Math.min(0.5 * innerH, innerH * 0.75);
+  this.centerX = width / 2;
+  this.centerY = flyZoneBottom / 2;
+  this.position.x = constrain(this.position.x, this.centerX - this.boxWidth / 2, this.centerX + this.boxWidth / 2);
+  this.position.y = constrain(this.position.y, this.centerY - this.boxHeight / 2, this.centerY + this.boxHeight / 2);
+};
+
 // p5 resize: use canvas container dimensions (left column in vertical layout)
 function windowResized() {
   const container = document.getElementById('canvas-container');
   const w = container ? container.offsetWidth : window.innerWidth;
   const h = container ? container.offsetHeight : window.innerHeight;
+  applyViewportParams(w, h);
   resizeCanvas(w, h);
   flyZoneBottom = h;
+  if (wanderer) wanderer.resize();
+  [flock123, flock456, flockNQR].forEach(function (flock) {
+    if (flock && flock.boids) {
+      for (let i = 0; i < flock.boids.length; i++) {
+        flock.boids[i].maxspeed = birdMaxSpeed;
+        flock.boids[i].maxforce = birdMaxForce;
+      }
+    }
+  });
 }
